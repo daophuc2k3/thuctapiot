@@ -17,25 +17,34 @@ const common_1 = require("@nestjs/common");
 const user_service_1 = require("./user.service");
 const create_user_dto_1 = require("./dto/create-user.dto");
 const update_user_dto_1 = require("./dto/update-user.dto");
+const response_dto_1 = require("./dto/response.dto");
 let UserController = class UserController {
     userService;
     constructor(userService) {
         this.userService = userService;
     }
-    create(createUserDto) {
-        return this.userService.create(createUserDto);
+    async create(createUserDto) {
+        const user = await this.userService.create(createUserDto);
+        return new response_dto_1.ResponseDto(201, 'User created successfully', user);
     }
-    findAll() {
-        return this.userService.findAll();
+    async findAll() {
+        const users = await this.userService.findAll();
+        return new response_dto_1.ResponseDto(200, 'Users fetched successfully', users);
     }
-    findOne(id) {
-        return this.userService.findOne(id);
+    async findOne(id) {
+        const user = await this.userService.findOne(id);
+        if (!user) {
+            return new response_dto_1.ResponseDto(404, 'User not found', null);
+        }
+        return new response_dto_1.ResponseDto(200, 'User fetched successfully', user);
     }
-    update(id, updateUserDto) {
-        return this.userService.update(id, updateUserDto);
+    async update(id, updateUserDto) {
+        const updatedUser = await this.userService.update(id, updateUserDto);
+        return new response_dto_1.ResponseDto(200, 'User updated successfully', updatedUser);
     }
-    remove(id) {
-        return this.userService.remove(id);
+    async remove(id) {
+        await this.userService.remove(id);
+        return new response_dto_1.ResponseDto(200, 'User deleted successfully', null);
     }
 };
 exports.UserController = UserController;
@@ -44,20 +53,20 @@ __decorate([
     __param(0, (0, common_1.Body)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [create_user_dto_1.CreateUserDto]),
-    __metadata("design:returntype", void 0)
+    __metadata("design:returntype", Promise)
 ], UserController.prototype, "create", null);
 __decorate([
     (0, common_1.Get)(),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", []),
-    __metadata("design:returntype", void 0)
+    __metadata("design:returntype", Promise)
 ], UserController.prototype, "findAll", null);
 __decorate([
     (0, common_1.Get)(':id'),
     __param(0, (0, common_1.Param)('id')),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String]),
-    __metadata("design:returntype", void 0)
+    __metadata("design:returntype", Promise)
 ], UserController.prototype, "findOne", null);
 __decorate([
     (0, common_1.Put)(':id'),
@@ -65,14 +74,14 @@ __decorate([
     __param(1, (0, common_1.Body)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String, update_user_dto_1.UpdateUserDto]),
-    __metadata("design:returntype", void 0)
+    __metadata("design:returntype", Promise)
 ], UserController.prototype, "update", null);
 __decorate([
     (0, common_1.Delete)(':id'),
     __param(0, (0, common_1.Param)('id')),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String]),
-    __metadata("design:returntype", void 0)
+    __metadata("design:returntype", Promise)
 ], UserController.prototype, "remove", null);
 exports.UserController = UserController = __decorate([
     (0, common_1.Controller)('users'),
