@@ -1,39 +1,46 @@
-# NestJS CRUD Project with MySQL and Prisma
+# NestJS CRUD Project with PostgreSQL and Prisma
+
 ## Cấu Hình Môi Trường
 
 ### 1. Cài Đặt Các Công Cụ Cần Thiết
 
-- **Node.js** (>=16.x) - Cài đặt từ [Node.js](https://nodejs.org/)
-- **MySQL** - Cài đặt từ [MySQL](https://dev.mysql.com/downloads/).
-- **Prisma** - Được cài đặt trong dự án.
+Trước khi bắt đầu, hãy chắc chắn rằng bạn đã cài đặt các công cụ cần thiết:
+
+- **Node.js** (>=16.x): [Cài đặt Node.js](https://nodejs.org/)
+- **PostgreSQL**: [Cài đặt PostgreSQL](https://www.postgresql.org/download/)
+- **Prisma**: Được cài đặt trong dự án.
 
 ### 2. Cài Đặt Dự Án
 
-1. **Clone Project**:
+1. **Clone Dự Án**:
 
-2. **Cài đặt các gói cần thiết**:
-    ```bash
-    npm install
-    ```
+2. **Cài Đặt Các Gói Cần Thiết**:
+   - Cài đặt các gói npm cần thiết cho dự án:
+     ```bash
+     npm install
+     ```
 
 3. **Cấu Hình Cơ Sở Dữ Liệu**:
-    - Cài đặt MySQL và tạo một cơ sở dữ liệu mới.
-    - Mở file `.env` và cấu hình thông tin kết nối DATABASE_URL với MySQL:
+   - Cài đặt **PostgreSQL** và tạo một cơ sở dữ liệu mới.
+   - Mở file `.env` trong thư mục gốc của dự án và cấu hình thông tin DATABASE_URL kết nối PostgreSQL:
 
 ### 3. Cài Đặt và Khởi Tạo Prisma
 
-1. **Tạo migration và áp dụng vào cơ sở dữ liệu**:
-    ```bash
-    npx prisma migrate dev --name init
-    ```
+1. **Tạo Migration và Áp Dụng vào Cơ Sở Dữ Liệu**:
+   - Sau khi cấu hình kết nối, bạn cần tạo migration và áp dụng vào cơ sở dữ liệu PostgreSQL:
+     ```bash
+     npx prisma migrate dev --name init
+     ```
 
 2. **Chạy Prisma Client**:
-    ```bash
-    npx prisma generate
-    ```
+   - Sau khi áp dụng migration, bạn cần chạy Prisma Client để tạo các file cần thiết cho dự án:
+     ```bash
+     npx prisma generate
+     ```
 
 ### 4. Chạy Dự Án
 
+Khi tất cả đã được cài đặt và cấu hình xong, bạn có thể chạy ứng dụng:
 
 ```bash
 npm run start
