@@ -17,28 +17,86 @@ let UserService = class UserService {
     constructor(prisma) {
         this.prisma = prisma;
     }
-    create(createUserDto) {
-        return this.prisma.user.create({
-            data: createUserDto,
+    async create(createUserDto) {
+        return await this.prisma.user.create({
+            data: {
+                ...createUserDto,
+            },
         });
     }
-    findAll() {
-        return this.prisma.user.findMany();
+    async findAll() {
+        return await this.prisma.user.findMany({
+            select: {
+                id: true,
+                name: true,
+                email: true,
+                address: true,
+                posts: false,
+                profile: false,
+            },
+        });
     }
-    findOne(id) {
-        return this.prisma.user.findUnique({
+    async findOne(id) {
+        return await this.prisma.user.findUnique({
             where: { id: Number(id) },
+            include: {
+                posts: true,
+                profile: true,
+            },
         });
     }
-    update(id, updateUserDto) {
-        return this.prisma.user.update({
+    async update(id, updateUserDto) {
+        return await this.prisma.user.update({
             where: { id: Number(id) },
             data: updateUserDto,
         });
     }
-    remove(id) {
-        return this.prisma.user.delete({
+    async remove(id) {
+        return await this.prisma.user.delete({
             where: { id: Number(id) },
+        });
+    }
+    async updateProfile(userId, updateProfileDto) {
+        return await this.prisma.profile.upsert({
+            where: { userId: Number(userId) },
+            update: {
+                bio: updateProfileDto.bio || '',
+                avatar: updateProfileDto.avatar || '',
+            },
+            create: {
+                userId: Number(userId),
+                bio: updateProfileDto.bio || '',
+                avatar: updateProfileDto.avatar || '',
+            },
+        });
+    }
+    async findProfile(userId) {
+        return await this.prisma.profile.findUnique({
+            where: { userId: Number(userId) },
+        });
+    }
+    async createPost(createPostDto, userId) {
+        return await this.prisma.post.create({
+            data: {
+                ...createPostDto,
+                userId: userId,
+            },
+        });
+    }
+    async findPosts(userId) {
+        return await this.prisma.post.findMany({
+            where: { userId: Number(userId) },
+        });
+    }
+    async updatePost(postId, updatePostDto) {
+        return await this.prisma.post.update({
+            where: { id: Number(postId) },
+            data: updatePostDto,
+        });
+    }
+    async removePost(postId) {
+        return await this.prisma.post.delete({
+            where: { id: Number(postId) },
         });
     }
 };

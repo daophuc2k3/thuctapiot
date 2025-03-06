@@ -10,6 +10,8 @@ exports.AppModule = void 0;
 const common_1 = require("@nestjs/common");
 const user_module_1 = require("./user/user.module");
 const logger_middleware_1 = require("./logger/logger.middleware");
+const auth_module_1 = require("./auth/auth.module");
+const prisma_module_1 = require("./prisma/prisma.module");
 let AppModule = class AppModule {
     configure(consumer) {
         consumer
@@ -20,7 +22,7 @@ let AppModule = class AppModule {
 exports.AppModule = AppModule;
 exports.AppModule = AppModule = __decorate([
     (0, common_1.Module)({
-        imports: [user_module_1.UserModule],
+        imports: [user_module_1.UserModule, auth_module_1.AuthModule, prisma_module_1.PrismaModule],
         controllers: [],
         providers: [],
     })

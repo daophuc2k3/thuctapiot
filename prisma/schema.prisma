@@ -13,9 +13,27 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 model User {
-  id        Int    @id @default(autoincrement())
-  name      String
-  email     String @unique
-  password  String
-  address   String 
+  id       Int      @id @default(autoincrement())
+  name     String
+  email    String   @unique
+  password String
+  address  String
+  profile  Profile? @relation  // Chỉ cần @relation mà không cần cung cấp fields, references
+  posts    Post[]   // Liên kết 1-n với Post
+}
+
+model Profile {
+  id     Int    @id @default(autoincrement())
+  userId Int    @unique
+  bio    String
+  avatar String
+  user   User   @relation(fields: [userId], references: [id])  // Chỉ cần chỉ định tại Profile
+}
+
+model Post {
+  id       Int    @id @default(autoincrement())
+  title    String
+  content  String
+  userId   Int
+  user     User   @relation(fields: [userId], references: [id]) // Liên kết với User
 }

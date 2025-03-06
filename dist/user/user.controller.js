@@ -17,6 +17,9 @@ const common_1 = require("@nestjs/common");
 const user_service_1 = require("./user.service");
 const create_user_dto_1 = require("./dto/create-user.dto");
 const update_user_dto_1 = require("./dto/update-user.dto");
+const update_profile_dto_1 = require("./dto/update-profile.dto");
+const create_post_dto_1 = require("./dto/create-post.dto");
+const update_post_dto_1 = require("./dto/update-post.dto");
 const response_dto_1 = require("./dto/response.dto");
 let UserController = class UserController {
     userService;
@@ -45,6 +48,33 @@ let UserController = class UserController {
     async remove(id) {
         await this.userService.remove(id);
         return new response_dto_1.ResponseDto(200, 'User deleted successfully', null);
+    }
+    async updateProfile(userId, updateProfileDto) {
+        const profile = await this.userService.updateProfile(userId, updateProfileDto);
+        return new response_dto_1.ResponseDto(200, 'Profile updated successfully', profile);
+    }
+    async findProfile(userId) {
+        const profile = await this.userService.findProfile(userId);
+        if (!profile) {
+            return new response_dto_1.ResponseDto(404, 'Profile not found', null);
+        }
+        return new response_dto_1.ResponseDto(200, 'Profile fetched successfully', profile);
+    }
+    async createPost(userId, createPostDto) {
+        const post = await this.userService.createPost(createPostDto, Number(userId));
+        return new response_dto_1.ResponseDto(201, 'Post created successfully', post);
+    }
+    async findPosts(userId) {
+        const posts = await this.userService.findPosts(userId);
+        return new response_dto_1.ResponseDto(200, 'Posts fetched successfully', posts);
+    }
+    async updatePost(postId, updatePostDto) {
+        const updatedPost = await this.userService.updatePost(postId, updatePostDto);
+        return new response_dto_1.ResponseDto(200, 'Post updated successfully', updatedPost);
+    }
+    async removePost(postId) {
+        await this.userService.removePost(postId);
+        return new response_dto_1.ResponseDto(200, 'Post deleted successfully', null);
     }
 };
 exports.UserController = UserController;
@@ -83,6 +113,51 @@ __decorate([
     __metadata("design:paramtypes", [String]),
     __metadata("design:returntype", Promise)
 ], UserController.prototype, "remove", null);
+__decorate([
+    (0, common_1.Post)(':userId/profile'),
+    __param(0, (0, common_1.Param)('userId')),
+    __param(1, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, update_profile_dto_1.UpdateProfileDto]),
+    __metadata("design:returntype", Promise)
+], UserController.prototype, "updateProfile", null);
+__decorate([
+    (0, common_1.Get)(':userId/profile'),
+    __param(0, (0, common_1.Param)('userId')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", Promise)
+], UserController.prototype, "findProfile", null);
+__decorate([
+    (0, common_1.Post)(':userId/posts'),
+    __param(0, (0, common_1.Param)('userId')),
+    __param(1, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, create_post_dto_1.CreatePostDto]),
+    __metadata("design:returntype", Promise)
+], UserController.prototype, "createPost", null);
+__decorate([
+    (0, common_1.Get)(':userId/posts'),
+    __param(0, (0, common_1.Param)('userId')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", Promise)
+], UserController.prototype, "findPosts", null);
+__decorate([
+    (0, common_1.Put)(':userId/posts/:postId'),
+    __param(0, (0, common_1.Param)('postId')),
+    __param(1, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, update_post_dto_1.UpdatePostDto]),
+    __metadata("design:returntype", Promise)
+], UserController.prototype, "updatePost", null);
+__decorate([
+    (0, common_1.Delete)(':userId/posts/:postId'),
+    __param(0, (0, common_1.Param)('postId')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", Promise)
+], UserController.prototype, "removePost", null);
 exports.UserController = UserController = __decorate([
     (0, common_1.Controller)('users'),
     __metadata("design:paramtypes", [user_service_1.UserService])
