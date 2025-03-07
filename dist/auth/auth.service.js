@@ -28,6 +28,7 @@ let AuthService = class AuthService {
                 name: registerDto.name,
                 email: registerDto.email,
                 password: hashedPassword,
+                roles: ['user'],
                 address: registerDto.address,
                 profile: {
                     create: {
@@ -46,7 +47,7 @@ let AuthService = class AuthService {
         if (!user || !(await bcrypt.compare(loginDto.password, user.password))) {
             throw new Error('Invalid credentials');
         }
-        const payload = { email: user.email, id: user.id };
+        const payload = { email: user.email, id: user.id, roles: user.roles, };
         return {
             access_token: this.jwtService.sign(payload),
         };

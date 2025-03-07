@@ -27,6 +27,7 @@ export class UserService {
         name: true,
         email: true,
         address: true,
+        roles: true,
         posts: false,
         profile: false,  // Loại bỏ thông tin profile (bio, avatar)
       },

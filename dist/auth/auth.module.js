@@ -12,7 +12,9 @@ const jwt_1 = require("@nestjs/jwt");
 const auth_service_1 = require("./auth.service");
 const auth_controller_1 = require("./auth.controller");
 const prisma_service_1 = require("../prisma/prisma.service");
+const passport_1 = require("@nestjs/passport");
 const dotenv = require("dotenv");
+const jwt_strategy_1 = require("./jwt.strategy");
 dotenv.config();
 let AuthModule = class AuthModule {
 };
@@ -20,13 +22,14 @@ exports.AuthModule = AuthModule;
 exports.AuthModule = AuthModule = __decorate([
     (0, common_1.Module)({
         imports: [
+            passport_1.PassportModule.register({ defaultStrategy: 'jwt' }),
             jwt_1.JwtModule.register({
                 secret: process.env.JWT_SECRET,
                 signOptions: { expiresIn: '1h' },
             }),
         ],
         controllers: [auth_controller_1.AuthController],
-        providers: [auth_service_1.AuthService, prisma_service_1.PrismaService],
+        providers: [auth_service_1.AuthService, prisma_service_1.PrismaService, jwt_strategy_1.JwtStrategy],
     })
 ], AuthModule);
 //# sourceMappingURL=auth.module.js.map

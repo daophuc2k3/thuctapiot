@@ -60,6 +60,7 @@ export class AuthService {
         name: registerDto.name,
         email: registerDto.email,
         password: hashedPassword,  // Mật khẩu đã mã hóa
+        roles: ['user'],  // Gán quyền user mặc định
         address: registerDto.address,  // Đảm bảo address là một trường trong User
         profile: {
           create: {
@@ -85,7 +86,7 @@ export class AuthService {
     }
 
     // Payload chứa thông tin cần thiết cho JWT
-    const payload = { email: user.email, id: user.id };
+    const payload = { email: user.email, id: user.id, roles: user.roles,};
 
     // Tạo và trả về JWT token
     return {

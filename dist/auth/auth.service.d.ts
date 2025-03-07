@@ -12,6 +12,7 @@ export declare class AuthService {
         password: string;
         address: string;
         id: number;
+        roles: string[];
     }>;
     login(loginDto: LoginDto): Promise<{
         access_token: string;

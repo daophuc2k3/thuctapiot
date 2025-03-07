@@ -21,6 +21,8 @@ const update_profile_dto_1 = require("./dto/update-profile.dto");
 const create_post_dto_1 = require("./dto/create-post.dto");
 const update_post_dto_1 = require("./dto/update-post.dto");
 const response_dto_1 = require("./dto/response.dto");
+const roles_decorator_1 = require("../auth/roles.decorator");
+const roles_guard_1 = require("../auth/roles.guard");
 let UserController = class UserController {
     userService;
     constructor(userService) {
@@ -100,6 +102,8 @@ __decorate([
 ], UserController.prototype, "findOne", null);
 __decorate([
     (0, common_1.Put)(':id'),
+    (0, common_1.UseGuards)(roles_guard_1.RolesGuard),
+    (0, roles_decorator_1.Roles)('admin'),
     __param(0, (0, common_1.Param)('id')),
     __param(1, (0, common_1.Body)()),
     __metadata("design:type", Function),
@@ -108,6 +112,8 @@ __decorate([
 ], UserController.prototype, "update", null);
 __decorate([
     (0, common_1.Delete)(':id'),
+    (0, common_1.UseGuards)(roles_guard_1.RolesGuard),
+    (0, roles_decorator_1.Roles)('admin'),
     __param(0, (0, common_1.Param)('id')),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String]),
@@ -130,6 +136,8 @@ __decorate([
 ], UserController.prototype, "findProfile", null);
 __decorate([
     (0, common_1.Post)(':userId/posts'),
+    (0, common_1.UseGuards)(roles_guard_1.RolesGuard),
+    (0, roles_decorator_1.Roles)('user', 'admin'),
     __param(0, (0, common_1.Param)('userId')),
     __param(1, (0, common_1.Body)()),
     __metadata("design:type", Function),
@@ -138,6 +146,8 @@ __decorate([
 ], UserController.prototype, "createPost", null);
 __decorate([
     (0, common_1.Get)(':userId/posts'),
+    (0, common_1.UseGuards)(roles_guard_1.RolesGuard),
+    (0, roles_decorator_1.Roles)('user', 'admin'),
     __param(0, (0, common_1.Param)('userId')),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String]),
@@ -145,6 +155,8 @@ __decorate([
 ], UserController.prototype, "findPosts", null);
 __decorate([
     (0, common_1.Put)(':userId/posts/:postId'),
+    (0, common_1.UseGuards)(roles_guard_1.RolesGuard),
+    (0, roles_decorator_1.Roles)('admin'),
     __param(0, (0, common_1.Param)('postId')),
     __param(1, (0, common_1.Body)()),
     __metadata("design:type", Function),
@@ -153,6 +165,8 @@ __decorate([
 ], UserController.prototype, "updatePost", null);
 __decorate([
     (0, common_1.Delete)(':userId/posts/:postId'),
+    (0, common_1.UseGuards)(roles_guard_1.RolesGuard),
+    (0, roles_decorator_1.Roles)('admin'),
     __param(0, (0, common_1.Param)('postId')),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String]),

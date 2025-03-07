@@ -31,6 +31,7 @@ let UserService = class UserService {
                 name: true,
                 email: true,
                 address: true,
+                roles: true,
                 posts: false,
                 profile: false,
             },
