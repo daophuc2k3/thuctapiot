@@ -10,7 +10,12 @@ exports.LoggerMiddleware = void 0;
 const common_1 = require("@nestjs/common");
 let LoggerMiddleware = class LoggerMiddleware {
     use(req, res, next) {
+        const startTime = Date.now();
         console.log(`Request... ${req.method} ${req.originalUrl}`);
+        res.on('finish', () => {
+            const duration = Date.now() - startTime;
+            console.log(`Response... ${req.method} ${req.originalUrl} - ${duration}ms`);
+        });
         next();
     }
 };
