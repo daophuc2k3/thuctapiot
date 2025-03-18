@@ -2,13 +2,14 @@ import { Injectable } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport'; // Đảm bảo sử dụng PassportStrategy thay vì JwtStrategy
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import { AuthService } from './auth.service';
+import { ConfigService } from '@nestjs/config'; // Đảm bảo import ConfigService
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
-  constructor(private authService: AuthService) {
+  constructor(private configService: ConfigService) {
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(), // Trích xuất JWT từ Header
-      secretOrKey: 'your-secret-key', // Mã khóa bảo mật
+      secretOrKey: configService.get('JWT_SECRET'),
     });
   }
 

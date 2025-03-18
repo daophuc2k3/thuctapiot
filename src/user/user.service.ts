@@ -14,26 +14,52 @@ export class UserService {
   async create(createUserDto: CreateUserDto) {
     return await this.prisma.user.create({
       data: {
-        ...createUserDto,
+        name: createUserDto.name,
+        email: createUserDto.email,
+        password: createUserDto.password,
+        address: createUserDto.address,
+        profile: {
+          create: {
+            bio: createUserDto.bio,      // Tạo Profile với bio
+            avatar: createUserDto.avatar, // Tạo Profile với avatar
+          },
+        },
       },
     });
   }
+  
+  
 
   // Lấy tất cả người dùng (Không bao gồm thông tin profile)
-  async findAll() {
-    return await this.prisma.user.findMany({
-      select: {
-        id: true,
-        name: true,
-        email: true,
-        address: true,
-        roles: true,
-        posts: false,
-        profile: false,  // Loại bỏ thông tin profile (bio, avatar)
+  async findAll({
+    skip = 0,
+    take = 10,
+    order = 'desc',
+    name,
+  }: {
+    skip: number;
+    take: number;
+    order: string;
+    name?: string;
+  }) {
+    const users = await this.prisma.user.findMany({
+      skip, // Bỏ qua các bản ghi cho phân trang
+      take, // Lấy số lượng bản ghi nhất định
+      orderBy: {
+        id: order === 'desc' ? 'desc' : 'asc', // Sắp xếp theo id, mặc định là descending
+      },
+      where: {
+        name: name ? { contains: name, mode: 'insensitive' } : undefined, // Lọc theo tên (nếu có)
+      },
+      include: {
+        profile: true, // Bao gồm thông tin profile
       },
     });
+  
+    return users;
   }
-
+  
+  
   // Lấy thông tin người dùng theo ID
   async findOne(id: string) {
     return await this.prisma.user.findUnique({
@@ -60,21 +86,17 @@ export class UserService {
     });
   }
 
-  // Cập nhật hoặc tạo Profile cho người dùng
+  //Cập nhật Profile cho người dùng
   async updateProfile(userId: string, updateProfileDto: UpdateProfileDto) {
-    return await this.prisma.profile.upsert({
-      where: { userId: Number(userId) },
-      update: {
-        bio: updateProfileDto.bio || '',  // Đảm bảo bio không phải là undefined
-        avatar: updateProfileDto.avatar || '',  // Đảm bảo avatar không phải là undefined
-      },
-      create: {
-        userId: Number(userId),
-        bio: updateProfileDto.bio || '',  // Đảm bảo bio không phải là undefined
-        avatar: updateProfileDto.avatar || '',  // Đảm bảo avatar không phải là undefined
+    return await this.prisma.profile.update({
+      where: { userId: Number(userId) }, // Sử dụng userId làm điều kiện
+      data: {
+        bio: updateProfileDto.bio || 'No bio provided', // Cập nhật bio, nếu không có thì dùng mặc định
+        avatar: updateProfileDto.avatar || 'https://default-avatar.com/avatar.jpg', // Cập nhật avatar, nếu không có thì dùng mặc định
       },
     });
   }
+  
   
   // Lấy Profile của người dùng
   async findProfile(userId: string) {
@@ -95,12 +117,34 @@ export class UserService {
   }
   
   // Lấy tất cả bài viết của người dùng
-  async findPosts(userId: string) {
-    return await this.prisma.post.findMany({
-      where: { userId: Number(userId) },
+  async findPosts({
+    userId,
+    skip = 0,
+    take = 10,
+    order = 'desc',
+    title,
+  }: {
+    userId: string;
+    skip: number;
+    take: number;
+    order: string;
+    title?: string;
+  }) {
+    const posts = await this.prisma.post.findMany({
+      where: {
+        userId: Number(userId),
+        title: title ? { contains: title, mode: 'insensitive' } : undefined, // Lọc theo tiêu đề (nếu có)
+      },
+      skip, // Số bản ghi cần bỏ qua (for pagination)
+      take, // Số bản ghi cần lấy
+      orderBy: {
+        id: order === 'desc' ? 'desc' : 'asc', // Sắp xếp theo id, mặc định là descending
+      },
     });
+  
+    return posts;
   }
-
+  
   // Cập nhật bài viết
   async updatePost(postId: string, updatePostDto: UpdatePostDto) {
     return await this.prisma.post.update({

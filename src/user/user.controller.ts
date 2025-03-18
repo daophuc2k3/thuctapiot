@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Param, Put, Delete, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Put, Delete, UseGuards, Query } from '@nestjs/common';
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
@@ -19,21 +19,46 @@ export class UserController {
     return new ResponseDto(201, 'User created successfully', user);
   }
 
+
   @Get()
-  async findAll(): Promise<ResponseDto<any[]>> {
-    const users = await this.userService.findAll();
+  async findAll(
+    @Query('page') page: number = 1,  // Số trang, mặc định là 1
+    @Query('limit') limit: number = 10, // Số bản ghi mỗi trang, mặc định là 10
+    @Query('order') order: string = 'desc', // Thứ tự sắp xếp, mặc định là 'desc'
+    @Query('name') name?: string, // Lọc theo tên (tùy chọn)
+  ): Promise<ResponseDto<any>> {
+    const skip = (page - 1) * limit; // Tính số lượng bản ghi cần bỏ qua (for pagination)
+
+    const users = await this.userService.findAll({
+      skip,
+      take: limit,
+      order,
+      name,
+    });
+
+    if (!users || users.length === 0) {
+      return new ResponseDto(404, 'No users found', null);
+    }
+
     return new ResponseDto(200, 'Users fetched successfully', users);
   }
+
 
   @Get(':id')
   async findOne(@Param('id') id: string): Promise<ResponseDto<any>> {
     const user = await this.userService.findOne(id);
+  
     if (!user) {
       return new ResponseDto(404, 'User not found', null);
     }
-    return new ResponseDto(200, 'User fetched successfully', user);
+  
+    // Trả về thông tin User cùng với Profile
+    return new ResponseDto(200, 'User fetched successfully', {
+      ...user,
+      profile: user.profile,  // Đảm bảo rằng thông tin profile cũng được trả về
+    });
   }
-
+  
   @Put(':id')
   @UseGuards(RolesGuard) // Ensure that only users with appropriate roles can update
   @Roles('admin') // Only admins can update users
@@ -74,10 +99,30 @@ export class UserController {
   }
 
   @Get(':userId/posts')
-  @UseGuards(RolesGuard) // Use RolesGuard to check roles
-  @Roles('user', 'admin') // Both user and admin can read posts
-  async findPosts(@Param('userId') userId: string): Promise<ResponseDto<any[]>> {
-    const posts = await this.userService.findPosts(userId);
+  @UseGuards(RolesGuard) // Kiểm tra quyền người dùng
+  @Roles('user', 'admin') // Cả user và admin đều có quyền xem bài viết
+  async findPosts(
+    @Param('userId') userId: string,  // Lấy userId từ URL
+    @Query('page') page: number = 1,  // Số trang, mặc định là 1
+    @Query('limit') limit: number = 10, // Số bản ghi mỗi trang, mặc định là 10
+    @Query('order') order: string = 'desc', // Thứ tự sắp xếp, mặc định là 'desc'
+    @Query('title') title?: string, // Lọc theo tiêu đề (tùy chọn)
+  ): Promise<ResponseDto<any>> {
+    const skip = (page - 1) * limit; // Tính số lượng bản ghi cần bỏ qua (for pagination)
+  
+    // Truyền các tham số vào service để xử lý
+    const posts = await this.userService.findPosts({
+      userId,
+      skip,
+      take: limit,
+      order,
+      title,
+    });
+  
+    if (!posts || posts.length === 0) {
+      return new ResponseDto(404, 'No posts found', null);
+    }
+  
     return new ResponseDto(200, 'Posts fetched successfully', posts);
   }
 
