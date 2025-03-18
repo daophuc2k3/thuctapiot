@@ -1,3 +1,6 @@
+import { ConfigService } from '@nestjs/config';
 export declare class AppService {
-    getHello(): string;
+    private configService;
+    constructor(configService: ConfigService);
+    getJwtSecret(): string | undefined;
 }

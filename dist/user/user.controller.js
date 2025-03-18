@@ -32,8 +32,17 @@ let UserController = class UserController {
         const user = await this.userService.create(createUserDto);
         return new response_dto_1.ResponseDto(201, 'User created successfully', user);
     }
-    async findAll() {
-        const users = await this.userService.findAll();
+    async findAll(page = 1, limit = 10, order = 'desc', name) {
+        const skip = (page - 1) * limit;
+        const users = await this.userService.findAll({
+            skip,
+            take: limit,
+            order,
+            name,
+        });
+        if (!users || users.length === 0) {
+            return new response_dto_1.ResponseDto(404, 'No users found', null);
+        }
         return new response_dto_1.ResponseDto(200, 'Users fetched successfully', users);
     }
     async findOne(id) {
@@ -41,7 +50,10 @@ let UserController = class UserController {
         if (!user) {
             return new response_dto_1.ResponseDto(404, 'User not found', null);
         }
-        return new response_dto_1.ResponseDto(200, 'User fetched successfully', user);
+        return new response_dto_1.ResponseDto(200, 'User fetched successfully', {
+            ...user,
+            profile: user.profile,
+        });
     }
     async update(id, updateUserDto) {
         const updatedUser = await this.userService.update(id, updateUserDto);
@@ -66,8 +78,18 @@ let UserController = class UserController {
         const post = await this.userService.createPost(createPostDto, Number(userId));
         return new response_dto_1.ResponseDto(201, 'Post created successfully', post);
     }
-    async findPosts(userId) {
-        const posts = await this.userService.findPosts(userId);
+    async findPosts(userId, page = 1, limit = 10, order = 'desc', title) {
+        const skip = (page - 1) * limit;
+        const posts = await this.userService.findPosts({
+            userId,
+            skip,
+            take: limit,
+            order,
+            title,
+        });
+        if (!posts || posts.length === 0) {
+            return new response_dto_1.ResponseDto(404, 'No posts found', null);
+        }
         return new response_dto_1.ResponseDto(200, 'Posts fetched successfully', posts);
     }
     async updatePost(postId, updatePostDto) {
@@ -89,8 +111,12 @@ __decorate([
 ], UserController.prototype, "create", null);
 __decorate([
     (0, common_1.Get)(),
+    __param(0, (0, common_1.Query)('page')),
+    __param(1, (0, common_1.Query)('limit')),
+    __param(2, (0, common_1.Query)('order')),
+    __param(3, (0, common_1.Query)('name')),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", []),
+    __metadata("design:paramtypes", [Number, Number, String, String]),
     __metadata("design:returntype", Promise)
 ], UserController.prototype, "findAll", null);
 __decorate([
@@ -149,8 +175,12 @@ __decorate([
     (0, common_1.UseGuards)(roles_guard_1.RolesGuard),
     (0, roles_decorator_1.Roles)('user', 'admin'),
     __param(0, (0, common_1.Param)('userId')),
+    __param(1, (0, common_1.Query)('page')),
+    __param(2, (0, common_1.Query)('limit')),
+    __param(3, (0, common_1.Query)('order')),
+    __param(4, (0, common_1.Query)('title')),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String]),
+    __metadata("design:paramtypes", [String, Number, Number, String, String]),
     __metadata("design:returntype", Promise)
 ], UserController.prototype, "findPosts", null);
 __decorate([

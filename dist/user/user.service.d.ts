@@ -15,13 +15,26 @@ export declare class UserService {
         id: number;
         roles: string[];
     }>;
-    findAll(): Promise<{
+    findAll({ skip, take, order, name, }: {
+        skip: number;
+        take: number;
+        order: string;
+        name?: string;
+    }): Promise<({
+        profile: {
+            bio: string;
+            avatar: string;
+            id: number;
+            userId: number;
+        } | null;
+    } & {
         name: string;
         email: string;
+        password: string;
         address: string;
         id: number;
         roles: string[];
-    }[]>;
+    })[]>;
     findOne(id: string): Promise<({
         profile: {
             bio: string;
@@ -77,7 +90,13 @@ export declare class UserService {
         id: number;
         userId: number;
     }>;
-    findPosts(userId: string): Promise<{
+    findPosts({ userId, skip, take, order, title, }: {
+        userId: string;
+        skip: number;
+        take: number;
+        order: string;
+        title?: string;
+    }): Promise<{
         title: string;
         content: string;
         id: number;
