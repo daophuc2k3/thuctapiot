@@ -7,9 +7,11 @@ import { ConfigModule } from '@nestjs/config';
 import { AppService } from './app.service';
 import { AppController } from './app.controller';
 import { EnvCheckMiddleware } from './env-check.middleware';  // Import middleware
+import { MqttModule } from './mqtt/mqtt.module';
+
 
 @Module({
-  imports: [UserModule, AuthModule, PrismaModule,  ConfigModule.forRoot({isGlobal: true,}) ], 
+  imports: [UserModule, AuthModule, PrismaModule,  ConfigModule.forRoot({isGlobal: true,}),MqttModule], 
   controllers: [AppController],
   providers: [AppService],
   
