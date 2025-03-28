@@ -15,6 +15,7 @@ const config_1 = require("@nestjs/config");
 const app_service_1 = require("./app.service");
 const app_controller_1 = require("./app.controller");
 const env_check_middleware_1 = require("./env-check.middleware");
+const mqtt_module_1 = require("./mqtt/mqtt.module");
 let AppModule = class AppModule {
     configure(consumer) {
         consumer
@@ -25,7 +26,7 @@ let AppModule = class AppModule {
 exports.AppModule = AppModule;
 exports.AppModule = AppModule = __decorate([
     (0, common_1.Module)({
-        imports: [user_module_1.UserModule, auth_module_1.AuthModule, prisma_module_1.PrismaModule, config_1.ConfigModule.forRoot({ isGlobal: true, })],
+        imports: [user_module_1.UserModule, auth_module_1.AuthModule, prisma_module_1.PrismaModule, config_1.ConfigModule.forRoot({ isGlobal: true, }), mqtt_module_1.MqttModule],
         controllers: [app_controller_1.AppController],
         providers: [app_service_1.AppService],
     })
